@@ -1,9 +1,9 @@
 import React, {
   createContext,
   Dispatch,
+  DragEventHandler,
   ReactNode,
   SetStateAction,
-  useEffect,
   useState,
 } from "react";
 
@@ -43,12 +43,41 @@ export const DargAndDropProvider: React.FC<DargAndDropProviderProps> = ({
 }) => {
   const [dragItem, setDragItem] = useState<DragItemProps>({ ...initialState });
 
+  /**
+   * On drag to bottom or top the scroll section should scroll
+   * @param e Drag Event
+   * @returns void
+   */
+  const dragOver: DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+
+    const container = document.getElementById("main-scroll-area");
+    if (!container) return;
+
+    const { clientHeight, scrollTop, scrollHeight } = container;
+    const rect = container.getBoundingClientRect();
+
+    // Calculate mouse position relative to container
+    const offsetY = e.clientY - rect.top;
+
+    const scrollSpeed = 10; // Pixels per frame
+    const edgeThreshold = 50; // Pixels near the edge to trigger scrolling
+
+    // Scroll down if near the bottom edge
+    if (offsetY > clientHeight - edgeThreshold && scrollTop + clientHeight < scrollHeight) {
+      container.scrollTop += scrollSpeed;
+    }
+
+    // Scroll up if near the top edge
+    if (offsetY < edgeThreshold && scrollTop > 0) {
+      container.scrollTop -= scrollSpeed;
+    }
+  };
+
   return (
     <DragContext.Provider value={{ dragItem, setDragItem }}>
       <div
-        onDragOver={(e) => {
-          e.preventDefault();
-        }}
+        onDragOver={dragOver}
       >
         {children}
       </div>

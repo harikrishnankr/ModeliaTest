@@ -30,6 +30,9 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
       setPlaceHolderPos("");
     }
 
+    /**
+     * Keep track of the drag item
+     */
     const handleDragStart = () => {
       if (element) {
         setDragItem({
@@ -43,6 +46,9 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
       }
     };
 
+    /**
+     * Remove all drag context data
+     */
     const handleDragEnd = () => {
       if (element) {
         element.style.opacity = "1";
@@ -63,8 +69,13 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     };
 
     const handleDragEnter = (e: DragEvent) => {
+      /**
+       * Check the drag direction is to top or down
+       * Store the previous Y-Index
+       * If the previous Y-Index > current Y-Index then dragging up
+       * else dragging down
+       */
       const currentY = e.clientY; // Current Y position of the pointer
-
       if (lastY !== null) {
         if (currentY > lastY) {
           setDragItem({ ...dragItem, dargDirection: "down" });
@@ -72,11 +83,17 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
           setDragItem({ ...dragItem, dargDirection: "up" });
         }
       }
-
       setLastY(currentY);
 
       const draggedIndex = dragItem.draggingIndex.toString();
+      /**
+       * preventDefault to skip the multiple drag enter event
+       */
       e.preventDefault();
+
+      /**
+       * If the dragged over another item
+       */
       if (!element?.contains(e.relatedTarget as Node)) {
         if (draggedIndex !== index.toString()) {
           setDragItem({ ...dragItem, isDragging: true, currentTarget: index });
@@ -121,6 +138,9 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     setDragItem({ ...dragItem, isDragging: false, stackId: null });
     setPlaceHolderPos("");
     let targetIndex = -1;
+    /**
+     * Dragged from top to bottom
+     */
     if (
       parseInt(draggedIndex) < index &&
       (dragItem.currentTarget || dragItem.currentTarget === 0)
@@ -129,7 +149,11 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
         dragItem.dargDirection === "up"
           ? dragItem.currentTarget - 1
           : dragItem.currentTarget;
-    } else if (
+    } 
+    /**
+     * Dragged from bottom to top
+     */
+    else if (
       parseInt(draggedIndex) > index &&
       (dragItem.currentTarget || dragItem.currentTarget === 0)
     ) {

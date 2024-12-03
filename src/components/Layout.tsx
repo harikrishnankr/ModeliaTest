@@ -10,7 +10,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, headerActions }) => {
   return (
     <>
       <Header actions={headerActions} />
-      <main className="w-full overflow-auto h-[calc(100%-4rem)]">
+      <main className="w-full overflow-auto h-[calc(100%-4rem)]" id="main-scroll-area">
         {children}
       </main>
     </>
