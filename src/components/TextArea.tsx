@@ -40,7 +40,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         rows={rows}
         cols={cols}
         maxLength={maxLength}
-        className={`border p-2 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`border p-2 rounded resize-none ${className}`}
         {...rest}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

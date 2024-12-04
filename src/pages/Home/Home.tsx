@@ -52,11 +52,13 @@ export const Home: React.FC = () => {
         </div>
       }
     >
-      <AddNewTile
-        isOpen={isAddDialogOpen}
-        onSubmit={onSubmit}
-        onCancel={onCancel}
-      />
+      {isAddDialogOpen && (
+        <AddNewTile
+          isOpen={isAddDialogOpen}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+        />
+      )}
       <div className="p-3 h-full">
         <div className="flex gap-3">
           {data

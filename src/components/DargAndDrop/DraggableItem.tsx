@@ -8,6 +8,11 @@ interface DraggableItemProps {
   stackId?: number | string | null;
   dargStart?: () => void;
   dragEnd?: () => void;
+  handleKeyDown?: (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    index: number
+  ) => void;
+  focused?: boolean;
 }
 
 export const DraggableItem: React.FC<DraggableItemProps> = ({
@@ -16,7 +21,9 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
   onDrop,
   stackId,
   dargStart,
-  dragEnd
+  dragEnd,
+  handleKeyDown,
+  focused,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { dragItem, setDragItem } = useDragContext();
@@ -125,72 +132,91 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
         element.removeEventListener("dragenter", handleDragEnter);
       }
     };
-  }, [dragItem, index, onDrop, setDragItem, placeholderPos, stackId, lastY, dargStart, dragEnd]);
+  }, [
+    dragItem,
+    index,
+    onDrop,
+    setDragItem,
+    placeholderPos,
+    stackId,
+    lastY,
+    dargStart,
+    dragEnd,
+  ]);
 
   const dropOnPlaceHolder = () => {
-    if (dragItem.draggingIndex === -1) {
-      return;
-    }
-    const draggedIndex = dragItem.draggingIndex.toString();
-    if (draggedIndex === index.toString()) {
-      return;
-    }
-    setDragItem({ ...dragItem, isDragging: false, stackId: null });
-    setPlaceHolderPos("");
-    let targetIndex = -1;
     /**
-     * Dragged from top to bottom
+     * Wrapped the function in a requestAnimationFrame
+     * So that the animation and tile rearrangement 
+     * matched with the device refresh rate and called before repaint
      */
-    if (
-      parseInt(draggedIndex) < index &&
-      (dragItem.currentTarget || dragItem.currentTarget === 0)
-    ) {
-      targetIndex =
-        dragItem.dargDirection === "up"
-          ? dragItem.currentTarget - 1
-          : dragItem.currentTarget;
-    } 
-    /**
-     * Dragged from bottom to top
-     */
-    else if (
-      parseInt(draggedIndex) > index &&
-      (dragItem.currentTarget || dragItem.currentTarget === 0)
-    ) {
-      targetIndex =
-        dragItem.dargDirection === "down"
-          ? dragItem.currentTarget + 1
-          : dragItem.currentTarget;
-    }
-    onDrop(parseInt(draggedIndex as string, 10), targetIndex);
-    if (dragEnd) {
-      dragEnd();
-    }
+    requestAnimationFrame(() => {
+      if (dragItem.draggingIndex === -1) {
+        return;
+      }
+      setPlaceHolderPos("");
+      const draggedIndex = dragItem.draggingIndex.toString();
+      if (draggedIndex === index.toString()) {
+        return;
+      }
+      setDragItem({ ...dragItem, isDragging: false, stackId: null });
+      let targetIndex = -1;
+      /**
+       * Dragged from top to bottom
+       */
+      if (
+        parseInt(draggedIndex) < index &&
+        (dragItem.currentTarget || dragItem.currentTarget === 0)
+      ) {
+        targetIndex =
+          dragItem.dargDirection === "up"
+            ? dragItem.currentTarget - 1
+            : dragItem.currentTarget;
+      } else if (
+      /**
+       * Dragged from bottom to top
+       */
+        parseInt(draggedIndex) > index &&
+        (dragItem.currentTarget || dragItem.currentTarget === 0)
+      ) {
+        targetIndex =
+          dragItem.dargDirection === "down"
+            ? dragItem.currentTarget + 1
+            : dragItem.currentTarget;
+      }
+      onDrop(parseInt(draggedIndex as string, 10), targetIndex);
+      if (dragEnd) {
+        dragEnd();
+      }
+    });
   };
 
   return (
-    <div
+    <button
       className={`flex flex-col gap-3 ${
         dragItem.isDragging && dragItem.draggingIndex === index ? "hidden" : ""
-      }`}
+      } ${focused ? "border border-[#6a3fe5] border-dashed" : ""}`}
+      role="option"
+      aria-describedby="operation"
+      onKeyDown={(e) => handleKeyDown && handleKeyDown(e, index)}
     >
       {dragItem.currentTarget === index && dragItem.dargDirection === "up" && (
         <div
-          className={`h-[86px] bg-[#e7f3ff] rounded border border-dashed border-[#a1a1a1]`}
+          className={`h-[86px] bg-[#e7f3ff] w-full rounded border border-dashed border-[#a1a1a1]`}
           onDrop={dropOnPlaceHolder}
         ></div>
       )}
-      <div ref={ref} draggable="true">
+      <div className="w-full" ref={ref} draggable="true">
         {children}
       </div>
       {dragItem.currentTarget === index &&
         dragItem.dargDirection === "down" && (
           <div
-            className={`h-[86px] bg-[#e7f3ff] rounded border border-dashed border-[#a1a1a1]`}
+            className={`h-[86px] w-full bg-[#e7f3ff] rounded border border-dashed border-[#a1a1a1]`}
             onDrop={dropOnPlaceHolder}
           ></div>
         )}
-    </div>
+    </button>
   );
 };
 

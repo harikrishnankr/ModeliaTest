@@ -25,7 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={`border px-4 py-2 rounded-md text-center ${gteStyles(
+      className={`border px-4 py-2 rounded-md text-center disabled:bg-[#a383ff] ${gteStyles(
         variant as string
       )} ${className}`}
       {...rest}

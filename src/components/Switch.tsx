@@ -17,7 +17,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ onLabel, offLabel, onToggle
   return (
     <button
       className={`w-28 h-8 flex items-center rounded-full p-1 cursor-pointer ${
-        isOn ? "bg-blue-500" : "bg-gray-300"
+        isOn ? "bg-[#6a3fe5]" : "bg-gray-300"
       }`}
       onClick={handleToggle}
     >

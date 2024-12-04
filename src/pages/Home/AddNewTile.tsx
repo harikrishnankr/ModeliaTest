@@ -4,15 +4,8 @@ import DateInput from "../../components/DateInput";
 import TextArea from "../../components/TextArea";
 import { Button } from "../../components/Button";
 import { Message } from "../../data";
-
-const INIT_FORM_DATA = {
-  date: "",
-  message: "",
-  error: {
-    date: "",
-    message: "",
-  },
-};
+import { INIT_FORM_DATA, MESSAGE_MAX_LENGTH } from "../../constants";
+import { isAddTileFormValid } from "../../utils/addTile";
 
 interface AddNewTileProps {
   isOpen: boolean;
@@ -28,12 +21,7 @@ export const AddNewTile: React.FC<AddNewTileProps> = ({
   const [newTileFormData, setNewTileFormData] = useState({ ...INIT_FORM_DATA });
 
   const submit = () => {
-    if (
-      newTileFormData.date &&
-      newTileFormData.message &&
-      !newTileFormData.error.date &&
-      !newTileFormData.error.message
-    ) {
+    if (isAddTileFormValid(newTileFormData)) {
       setNewTileFormData({ ...INIT_FORM_DATA });
       onSubmit({
         date: newTileFormData.date,
@@ -92,7 +80,7 @@ export const AddNewTile: React.FC<AddNewTileProps> = ({
                 },
               });
             }}
-            maxLength={200}
+            maxLength={MESSAGE_MAX_LENGTH}
             error={newTileFormData.error.message}
           />
         </div>
@@ -101,7 +89,12 @@ export const AddNewTile: React.FC<AddNewTileProps> = ({
         <Button variant="secondary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={submit}>Submit</Button>
+        <Button
+          onClick={submit}
+          disabled={!isAddTileFormValid(newTileFormData)}
+        >
+          Submit
+        </Button>
       </div>
     </Dialog>
   );
