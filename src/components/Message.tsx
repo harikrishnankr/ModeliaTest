@@ -8,13 +8,13 @@ interface MessageProps {
 export const Message: React.FC<MessageProps> = ({ date, message }) => {
   return (
     <div className="border rounded p-3 cursor-pointer bg-white">
-      <div className="flex mb-3">
-        <span className="inline-block mr-3 font-semibold">Date:</span>
-        <span>{date}</span>
+      <div className="flex flex-col mb-3 justify-start">
+        <div className="font-semibold text-left">Date:</div>
+        <div className="text-left">{date}</div>
       </div>
-      <div className="flex">
-        <span className="inline-block mr-3 font-semibold">Message:</span>
-        <span className="break-all text-left">{message}</span>
+      <div className="flex flex-col justify-start">
+        <div className="font-semibold text-left">Message:</div>
+        <div className="break-all text-left">{message}</div>
       </div>
     </div>
   )

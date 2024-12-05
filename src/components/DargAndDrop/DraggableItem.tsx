@@ -40,11 +40,12 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     /**
      * Keep track of the drag item
      */
-    const handleDragStart = () => {
+    const handleDragStart = (e: DragEvent) => {
       if (element) {
         setDragItem({
           draggingIndex: index,
           stackId: stackId as string,
+          dragItemHeight: (e as unknown as React.DragEvent).currentTarget?.clientHeight
         });
         element.style.opacity = "0.6";
         if (dargStart) {
@@ -66,6 +67,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
           dargDirection: null,
           isDragging: false,
           stackId: null,
+          dragItemHeight: 0
         });
         setPlaceHolderPos("");
         setLastY(null);
@@ -142,6 +144,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     lastY,
     dargStart,
     dragEnd,
+    ref
   ]);
 
   const dropOnPlaceHolder = () => {
@@ -204,6 +207,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
         <div
           className={`h-[86px] bg-[#e7f3ff] w-full rounded border border-dashed border-[#a1a1a1]`}
           onDrop={dropOnPlaceHolder}
+          style={{ height: dragItem.dragItemHeight || 'auto' }}
         ></div>
       )}
       <div className="w-full" ref={ref} draggable="true">
@@ -214,6 +218,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
           <div
             className={`h-[86px] w-full bg-[#e7f3ff] rounded border border-dashed border-[#a1a1a1]`}
             onDrop={dropOnPlaceHolder}
+            style={{ height: dragItem.dragItemHeight || 'auto' }}
           ></div>
         )}
     </button>

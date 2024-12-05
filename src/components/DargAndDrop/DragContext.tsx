@@ -17,6 +17,7 @@ export interface DragItemProps {
   isDragging?: boolean;
   currentTarget?: number;
   dargDirection?: "up" | "down" | null;
+  dragItemHeight?: string | number;
 }
 
 export interface DragContextProps {
